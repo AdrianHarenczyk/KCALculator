@@ -10,7 +10,7 @@ public class Name implements Serializable {
         this.value = value;
     }
 
-    public Name make(String value) {
+    public static Name make(String value) {
         return new Name(value);
     }
 

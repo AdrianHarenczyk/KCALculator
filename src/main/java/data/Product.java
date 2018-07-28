@@ -24,11 +24,7 @@ public class Product implements Serializable {
 
     @Override
     public String toString() {
-        return "Product{" +
-                "name=" + name +
-                ", measureUnit=" + measureUnit +
-                ", kcal=" + kcal +
-                '}';
+        return name.toString() + " : " + kcal + " kcal for 100 " + measureUnit.getShort();
     }
 
     @Override

@@ -12,7 +12,7 @@ public class MainStage extends Application {
     public void start(Stage primaryStage) throws Exception{
         Parent root = FXMLLoader.load(getClass().getResource("/main_view.fxml"));
         primaryStage.setTitle("KCALculator");
-        primaryStage.setScene(new Scene(root, 1200, 900));
+        primaryStage.setScene(new Scene(root, 600, 400));
         primaryStage.show();
     }
 
