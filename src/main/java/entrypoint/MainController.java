@@ -1,33 +1,38 @@
 package entrypoint;
 
-import javafx.beans.property.ObjectProperty;
+import data.Product;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.ListView;
-import javafx.scene.control.SelectionMode;
-import javafx.scene.control.TextField;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.control.*;
+import javafx.scene.layout.BorderPane;
+import javafx.stage.Window;
+
+import java.io.IOException;
+import java.util.Optional;
 
 public class MainController {
 
     @FXML
-    private ListView<String> productsView;
-    private ObservableList<String> products;
+    private BorderPane mainPane;
+
+    @FXML
+    private ListView<Product> productsView;
+    private ObservableList<Product> products;
 
     @FXML
     private TextField addProductField;
 
     public void initialize() {
         initializeList();
-        setListToSingleSelection();
+        initSelectionModel();
         addOnClick();
     }
 
     @FXML
     private void addProduct() {
         String product = addProductField.getText();
-        products.add(product);
-        System.out.println(products);
     }
 
     private void initializeList() {
@@ -35,33 +40,49 @@ public class MainController {
         productsView.setItems(products);
     }
 
-    private void setListToSingleSelection() {
-        productsView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-    }
-
     private void addOnClick() {
-        ObjectProperty<SelectionMode> itemProperty = getItemProperty();
-        addEventListener(itemProperty);
     }
-
-    private ObjectProperty<SelectionMode> getItemProperty() {
+    private void initSelectionModel() {
         productsView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-        return productsView.getSelectionModel().selectionModeProperty();
     }
 
-    private void addEventListener(ObjectProperty<SelectionMode> itemProperty) {
-        itemProperty.addListener((observable, oldValue, newValue) -> {
-            removeSelected();
-        });
+    @FXML
+    public void showNewItemDialog() {
+        Dialog<ButtonType> newItemDialog = createDialog(mainPane.getScene().getWindow(), "Add new product");
+        newItemDialog.setHeaderText("Use this dialog to add new product.");
+        FXMLLoader fxmlLoader = prepareLoader()
+        try {
+            newItemDialog.getDialogPane().setContent(fxmlLoader.load());
+
+        } catch(IOException e) {
+            System.out.println("Couldn't load the dialog");
+            e.printStackTrace();
+            return;
+        }
+
+        newItemDialog.getDialogPane().getButtonTypes().add(ButtonType.OK);
+        newItemDialog.getDialogPane().getButtonTypes().add(ButtonType.CANCEL);
+
+        Optional<ButtonType> result = newItemDialog.showAndWait();
+        if(result.isPresent() && result.get() == ButtonType.OK) {
+            DialogController controller = fxmlLoader.getController();
+            TodoItem newItem = controller.processResults();
+            todoListView.getSelectionModel().select(newItem);
+        }
+
+
     }
 
-    private boolean doesExist(SelectionMode newValue) {
-        return null != newValue;
+    private Dialog<ButtonType> createDialog(Window owner, String title) {
+        Dialog<ButtonType> dialog = new Dialog<>();
+        dialog.initOwner(owner);
+        dialog.setTitle(title);
+        return dialog;
     }
 
-    private void removeSelected() {
-        String selectedProduct = productsView.getSelectionModel().getSelectedItem();
-        products.remove(selectedProduct);
-        System.out.println(products);
+    private FXMLLoader prepareLoader(String location) {
+        FXMLLoader fxmlLoader = new FXMLLoader();
+        fxmlLoader.setLocation(getClass().getResource(location));
+        return fxmlLoader;
     }
 }
