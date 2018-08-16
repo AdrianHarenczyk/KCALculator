@@ -1,5 +1,6 @@
 package entrypoint;
 
+import appinstance.AppInstanceSaver;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -19,5 +20,15 @@ public class MainStage extends Application {
 
     public static void main(String[] args) {
         launch(args);
+    }
+
+    public void init() {
+        AppInstanceSaver instance = AppInstanceSaver.instance();
+        instance.loadInstance();
+    }
+
+    public void stop() {
+        AppInstanceSaver instance = AppInstanceSaver.instance();
+        instance.saveInstance();
     }
 }

@@ -1,5 +1,6 @@
 package controllers;
 
+import appinstance.AppInstanceSaver;
 import data.Product;
 import data.small.Messages;
 import exceptions.ExceptionHandler;
@@ -29,13 +30,16 @@ public class MainController {
     @FXML
     private TextField addProductField;
 
+    private AppInstanceSaver appInstance;
+
     public void initialize() {
+        appInstance = AppInstanceSaver.instance();
         initializeList();
         initSelectionModel();
     }
 
     private void initializeList() {
-        products = FXCollections.observableArrayList();
+        products = appInstance.getProductList();
         productsView.setItems(products);
     }
 
@@ -52,11 +56,8 @@ public class MainController {
     private void showNewItemDialog() {
         Dialog<ButtonType> newItemDialog = createDialog(mainPane.getScene().getWindow(), DIALOG_TITLE);
         newItemDialog.setHeaderText(DIALOG_HEADER.text());
-
         FXMLLoader fxmlLoader = initLoader(newItemDialog);
-
         addButtonToDialog(newItemDialog, CANCEL, OK);
-
         addProductWhenConfirm(newItemDialog, fxmlLoader);
     }
 

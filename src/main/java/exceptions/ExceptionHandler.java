@@ -1,5 +1,7 @@
 package exceptions;
 
+import utility.ConsoleColor;
+
 import java.io.IOException;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
@@ -18,15 +20,15 @@ public class ExceptionHandler {
     }
 
     public static <T extends Exception> void handleException(T exception, String message) {
-        consoleLogger.severe(exception.getClass().getSimpleName() + " has occurred.");
-        consoleLogger.severe(message);
+        consoleLogger.severe(ConsoleColor.MAGENTA + exception.getClass().getSimpleName()
+                + " has occurred.\n" + message + "\n" + ConsoleColor.RESET);
         logStackTraceMessages(exception);
     }
 
     private static FileHandler initializeFileHandler() {
         FileHandler fileHandler;
         try {
-            fileHandler = new FileHandler("/error_log_%g.txt", 512, 3);
+            fileHandler = new FileHandler("error_log_%g.dtd", 512, 3);
         } catch (IOException e) {
             fileHandler = null;
             fileLogger.severe(ERROR_FILE_LOGGER);
